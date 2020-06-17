@@ -118,8 +118,9 @@ class HashingMemory(tf.Module):
 
         # weighted sum of values
         values = tf.gather(self.values, indices)
-        # Equivalent to tf.reduce_sum(values * tf.expand_dims(scores, -1))
-        output = tf.einsum('ijk, ij -> ik', values, scores)  # (bs,v_dim)
+        # The following two lines are equivalent
+        # output = tf.einsum('ijk, ij -> ik', values, scores)  # (bs,v_dim)
+        output = tf.reduce_sum(values * tf.expand_dims(scores, -1), axis=1)
 
         # reshape output
         if len(prefix_shape) >= 2:
