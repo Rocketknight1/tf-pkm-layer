@@ -1,5 +1,3 @@
-# All code stolen from https://github.com/facebookresearch/XLM/blob/master/PKM-layer.ipynb
-
 import math
 import numpy as np
 import tensorflow as tf
@@ -45,6 +43,8 @@ class HashingMemory(tf.Module):
                   "sentences with the same size at training time (i.e. without padding). "
                   "Otherwise, the padding token will result in incorrect mean/variance "
                   "estimations in the BatchNorm layer.\n")
+            print("SECOND WARNING: I haven't verified that the TF layer with batchnorm is "
+                  "equivalent to the original PyTorch implementation.")
 
     def _get_indices(self, query, subkeys):
         """
@@ -126,33 +126,3 @@ class HashingMemory(tf.Module):
             output = tf.reshape(output, (prefix_shape + (self.v_dim,)))                  # (...,v_dim)
 
         return output
-
-
-if __name__ == '__main__':
-    # Do a test run and test equivalence with the Pytorch reference
-    from memory_layer import HashingMemory as TorchHashingMemory
-    import torch
-
-    # Initialize and run the TF network
-    network = HashingMemory(input_dim=256, output_dim=256, query_batchnorm=False)
-    test_input = np.random.random(size=(128, 256))
-    tf_input = tf.convert_to_tensor(test_input, dtype=tf.float32)
-    tf_out = network(tf_input)
-
-    # Initialize the torch network
-    torch_layer = TorchHashingMemory(input_dim=256, output_dim=256, query_batchnorm=False)
-
-    # Copy the relevant parameters (except batchnorm)
-    torch_layer.keys[:] = torch.tensor(network.keys.numpy())
-    torch_layer.values.weight[:] = torch.tensor(network.values.numpy())
-    torch_layer.query_proj[0].weight[:] = torch.tensor(np.transpose((network.query_proj.get_weights()[0])))
-    torch_layer.query_proj[0].bias[:] = torch.tensor(network.query_proj.get_weights()[1])
-
-    # Run the torch network and get the difference in outputs
-    torch_input = torch.from_numpy(test_input).to(torch.float32)
-    torch_out = torch_layer(torch_input)
-    diff = torch_out.detach().numpy() - tf_out.numpy()
-
-    print(f"Mean absolute difference between torch and tf is {np.mean(np.abs(diff))}")
-    breakpoint()
-    print()

@@ -1,4 +1,4 @@
-# All code stolen from https://github.com/facebookresearch/XLM/blob/master/PKM-layer.ipynb
+# All code here stolen from https://github.com/facebookresearch/XLM/blob/master/PKM-layer.ipynb
 
 import math
 import numpy as np
