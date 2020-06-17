@@ -13,9 +13,9 @@ When batchnorm is enabled, the outputs are no longer equivalent - I think this i
 specifics of how TF and PyTorch compute batchnorm. If anyone can figure out how to make the two line up, please let
 me know! I'm pretty confident that even if they're not exactly equivalent the TF code is still valid.
 
-##Usage
+## Usage
 
-### Using PKM in your own projects
+#### Using PKM in your own projects
 
 ```
 from tf_memory_layer import HashingMemory
@@ -24,7 +24,7 @@ pkm_layer = HashingMemory(input_dim=256, output_dim=256, query_batchnorm=False)
 pkm_output = pkm_layer(my_input_tensor)
 ```
 
-### Testing equivalence
+#### Testing equivalence
 Note that this requires both Tensorflow and PyTorch to be installed in the same environment.
 
 ```
