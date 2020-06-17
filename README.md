@@ -34,7 +34,7 @@ Mean absolute difference between torch and tf is 4.676983245133215e-09
 
 ## Benchmarking versus original PyTorch function
 
-All benchmarks performed on an RTX 2080 Ti, float32 precision, CUDA 10.1, TF 2.2 and Torch 1.5.0.
+All benchmarks performed on an RTX 2080 Ti, Ubuntu 18.04, float32 precision, CUDA 10.1, TF 2.2 and Torch 1.5.0.
 
 The benchmark consists of a network with 6 product-key memory layers, with `input_dim=768` and `output_dim=768` to match
 BERT-base and `query_batchnorm=False`. The input data is of size `(16, 256, 768)` to simulate a normal BERT
