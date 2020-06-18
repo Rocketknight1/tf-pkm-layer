@@ -5,7 +5,8 @@ from tensorflow.keras.layers import Dense, BatchNormalization
 
 
 class HashingMemory(tf.Module):
-    def __init__(self, input_dim, output_dim, k_dim=256, heads=4, knn=32, n_keys=512, query_batchnorm=True, seed=12345):
+    def __init__(self, input_dim, output_dim, k_dim=256, heads=4, knn=32, n_keys=512, query_batchnorm=True,
+                 embeddingbag_method='reduce_sum', seed=12345):
 
         super().__init__()
 
@@ -45,6 +46,11 @@ class HashingMemory(tf.Module):
                   "estimations in the BatchNorm layer.\n")
             print("SECOND WARNING: I haven't verified that the TF layer with batchnorm is "
                   "equivalent to the original PyTorch implementation.")
+
+        if embeddingbag_method not in ('reduce_sum', 'einsum'):
+            raise NotImplementedError("Unrecognized embeddingbag method!")
+        self.embeddingbag_method = embeddingbag_method
+
 
     def _get_indices(self, query, subkeys):
         """
@@ -118,9 +124,11 @@ class HashingMemory(tf.Module):
 
         # weighted sum of values
         values = tf.gather(self.values, indices)
-        # The following two lines are equivalent
-        # output = tf.einsum('ijk, ij -> ik', values, scores)  # (bs,v_dim)
-        output = tf.reduce_sum(values * tf.expand_dims(scores, -1), axis=1)
+        # The following two calls are equivalent
+        if self.embeddingbag_method == 'einsum':
+            output = tf.einsum('ijk, ij -> ik', values, scores)  # (bs,v_dim)
+        else:
+            output = tf.reduce_sum(values * tf.expand_dims(scores, -1), axis=1)  # (bs,v_dim)
 
         # reshape output
         if len(prefix_shape) >= 2:

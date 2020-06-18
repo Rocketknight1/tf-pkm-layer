@@ -42,7 +42,7 @@ input with a batch size of 16 and a sequence length of 256 tokens. The reported 
 100 runs through this memory-only network.
 
 In general, the manual implementations to match Torch's `EmbeddingBag` layer were much slower, but Tensorflow's
-XLA compiler (accessed by setting the `experimental_compile` argument to `tf.function()` to `True`) seemed to be able to
+XLA compiler (accessed by setting the `experimental_compile` flag in `tf.function`) seemed to be able to
 optimize things back to almost-identical performance.
 
 | framework | compiled     | EmbeddingBag method | Time (100 runs) |
