@@ -1,3 +1,11 @@
+### Update 2020-10-22
+After hacking around on this, I found that XLA sometimes managed decent performance, but there was no pure TF
+implementation that yielded good performance and memory usage simultaneously for the backwards pass. 
+I've implemented a custom op in CUDA instead, and I'm trying to get it added to tf or tf/addons, at which point
+I'll reimplement the PKM layer using it. If you've stumbled across this page and you want a Tensorflow EmbeddingBag
+or PKM layer, message me or raise an issue or something and I'll send you the custom op .so file!
+
+
 # Product Key Memory layers for Tensorflow
 
 This repo contains a straightforward reimplementation of the code for 
